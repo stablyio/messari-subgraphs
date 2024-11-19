@@ -24,6 +24,8 @@ enum Network {
   OSMOSIS
   MATIC # aka Polygon
   XDAI # aka Gnosis Chain
+  FRAXTAL
+  FRAXTAL_TESTNET
 }
 
 enum ProtocolType {

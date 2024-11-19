@@ -25,7 +25,7 @@ import {
   PoolTemplate,
   LiquidityGauge as LiquidityGaugeTemplate,
 } from "../../generated/templates";
-import { Versions } from "../versions";
+//import { Versions } from "../versions";
 import * as constants from "./constants";
 import { getUsdPricePerToken } from "../prices";
 import { protocolLevelPriceValidation } from "../prices/common/validation";
@@ -116,9 +116,9 @@ export function getOrCreateDexAmmProtocol(): DexAmmProtocol {
     protocol._poolIds = [];
   }
 
-  protocol.schemaVersion = Versions.getSchemaVersion();
-  protocol.subgraphVersion = Versions.getSubgraphVersion();
-  protocol.methodologyVersion = Versions.getMethodologyVersion();
+  protocol.schemaVersion = "1.3.0";
+  protocol.subgraphVersion = "1.0.0";
+  protocol.methodologyVersion = "1.0.0";
 
   protocol.save();
 

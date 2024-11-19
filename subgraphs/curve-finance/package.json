@@ -7,10 +7,19 @@
     "prepare:yaml": "mustache protocols/${npm_config_protocol}/config/deployments/${npm_config_id}/configurations.json protocols/${npm_config_protocol}/config/templates/${npm_config_template} > subgraph.yaml",
     "prepare:constants": "mustache protocols/${npm_config_protocol}/config/deployments/${npm_config_id}/configurations.json src/common/constants.mustache > src/common/constants.ts",
     "deploy:subgraph": "graph deploy --product hosted-service ${npm_config_target}",
-    "build": "node ../../deployment/deployment.js --deploy=${npm_config_deploy} --token=${npm_config_token} --service=${npm_config_service} --id=${npm_config_id} --span=${npm_config_span} --target=${npm_config_target} --slug=${npm_config_slug} --printlogs=${npm_config_printlogs}"
+    "build": "node ../../deployment/deployment.js --deploy=${npm_config_deploy} --token=${npm_config_token} --service=${npm_config_service} --id=${npm_config_id} --span=${npm_config_span} --target=${npm_config_target} --slug=${npm_config_slug} --printlogs=${npm_config_printlogs}",
+
+    "create-fraxtal-mainnet": "graph create --node http://52.11.39.166:8020 stablyio-curve-fraxtal",
+    "deploy-fraxtal-mainnet": "graph deploy stablyio-curve-fraxtal --ipfs http://52.11.39.166:5001 --node http://52.11.39.166:8020 --version-label=0.0.1",
+    
+    "prepare-fraxtal-testnet:yaml": "mustache protocols/curve-finance/config/deployments/curve-finance-frax-testnet/configurations.json protocols/curve-finance/config/templates/curve.template.yaml > subgraph.yaml",
+    "prepare-fraxtal-testnet:constants": "mustache protocols/curve-finance//config/deployments/curve-finance-frax-testnet/configurations.json src/common/constants.mustache > src/common/constants.ts",
+    "create-fraxtal-testnet": "graph create --node http://52.11.39.166:8020 stablyio-curve-fraxtal-testnet",
+    "deploy-fraxtal-testnet": "graph deploy stablyio-curve-fraxtal-testnet --ipfs http://52.11.39.166:5001 --node http://52.11.39.166:8020 --version-label=0.0.2"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "^0.46.1",
-    "@graphprotocol/graph-ts": "^0.29.3"
+    "@graphprotocol/graph-ts": "^0.29.3",
+    "mustache": "^4.2.0"
   }
 }

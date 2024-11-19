@@ -1,0 +1,40 @@
+{
+    "network": "frax-testnet",
+    "defaultNetwork": "Network.FRAXTAL_TESTNET",
+  
+    "priceCaching": 1000,
+  
+    "poolInfoContract": "0xB12Ca19B404a2501f68CdE073e22DF702b45F43a",
+    "protocolAddress": "0x0E71FE19A25E224c9Fe6949E5b995f8157236166",
+    "crvTokenAddress": "0x2CAb811d351B4eF492D8C197E09939F1C9f54330",
+  
+    "gaugeControllerContract": "0xc30FC3Aa99375eB7eeA2d6a6bc91Da256eCe7253",
+    "gaugeControllerStartBlock": "11718689",
+  
+    "poolRegistry": [
+      {
+        "name": "MainRegistry",
+        "address": "0xB12Ca19B404a2501f68CdE073e22DF702b45F43a",
+        "startBlock": "2373837"
+      },
+      {
+        "name": "StableSwapFactory",
+        "address": "0x94CEe64A83102C99c83B19f104a165F4AD5ebd5c",
+        "startBlock": "3465832"
+      },
+      {
+        "name": "TricryptoSwapFactory",
+        "address": "0x904b7971C04D35F759B4925f4CE94717671DD9F2",
+        "startBlock": "3729171"
+      },
+      {
+        "name": "TwocryptoSwapFactory",
+        "address": "0x904b7971C04D35F759B4925f4CE94717671DD9F2",
+        "startBlock": "3729171"
+      }
+      ],
+  
+    "graftEnabled": false,
+    "subgraphId": "",
+    "graftStartBlock": ""
+  }
