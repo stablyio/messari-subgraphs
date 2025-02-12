@@ -7,4 +7,7 @@ export namespace TokenRegistry {
   export const TOKENS_2022 = "QmZ3Q5FHm9TJJNwPTX9gX949KExn2r6BT2cqddxebDaHMK"; // data/tokens-2022.txt
   export const TOKENS_DEFAULT =
     "QmV1Ppv576oCPTNE2jN1w6pp6YFVNVkvU45xZWyUMrpKEH"; // data/tokens.json
+
+
+  export const FRAX_TESTNET = "QmdbvttSyvgFzXdXxhoWegZNbvp2QNm1ioL8UVaDZR7JxL"; // data/frax-testnet-tokens.txt
 }

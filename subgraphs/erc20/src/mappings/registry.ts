@@ -1,7 +1,7 @@
 import { Address, JSONValue, Value, log, ipfs } from "@graphprotocol/graph-ts";
 
 import { Token } from "../../generated/schema";
-import { Unknown as UnknownEvent } from "../../generated/TokenRegistry/TokenRegistry";
+import { Initialized as UnknownEvent } from "../../generated/TokenRegistry/TokenRegistry";
 
 import {
   BurnableToken,
@@ -10,25 +10,32 @@ import {
 } from "../../generated/templates";
 
 import {
-  REGISTRY_HASH,
   DEFAULT_DECIMALS,
   BIGINT_ZERO,
 } from "../common/constants";
+import { TOKEN_LIST } from "../../configurations/configure";
+import { BaseERC20Token } from "../../configurations/configurations";
 
 export function initTokenList(event: UnknownEvent): void {
   log.debug("Initializing token registry, block={}", [
     event.block.number.toString(),
   ]);
 
-  ipfs.mapJSON(REGISTRY_HASH, "createToken", Value.fromString(""));
+  // ipfs.mapJSON(REGISTRY_HASH, "createToken", Value.fromString(""));
+  TOKEN_LIST.forEach((token) => {
+    createToken(token)
+  })
 }
 
-export function createToken(value: JSONValue, userData: Value): void {
-  let rawData = value.toArray();
+// export function createToken(value: JSONValue, userData: Value): void {
+//   let rawData = value.toArray();
 
-  let address = rawData[0].isNull() ? "" : rawData[0].toString();
-  let symbol = rawData[1].isNull() ? "" : rawData[1].toString();
+//   let address = rawData[0].isNull() ? "" : rawData[0].toString();
+//   let symbol = rawData[1].isNull() ? "" : rawData[1].toString();
 
+export function createToken(erc20Token: BaseERC20Token): void {
+  let address = erc20Token.address
+  let symbol = erc20Token.symbol
   if (address != null) {
     let contractAddress = Address.fromString(address);
 

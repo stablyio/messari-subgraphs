@@ -1,19 +1,14 @@
 [
   {
-    "anonymous": true,
+    "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "name": "param0",
-        "type": "bytes"
-      },
-      {
-        "indexed": true,
-        "name": "param1",
-        "type": "bytes"
+        "indexed": false,
+        "name": "version",
+        "type": "uint8"
       }
     ],
-    "name": "Unknown",
+    "name": "Initialized",
     "type": "event"
   }
 ]
