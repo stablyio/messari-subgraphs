@@ -14,6 +14,11 @@ import {
   LiquidityLimit 
 } from "../generated/schema";
 
+// Add these constants at the top of your file
+const FRAX_DUSD_STAKE = Address.fromString("0x05600c37D54a4F3cDc76E0867aF1530BeCC332ca")
+const FRAX_SUSDE_STAKE = Address.fromString("0x413497D96d1A9dDC75D6786021B8c4eF5bF2333e")
+const CVX_FRAX_DUSD_STAKE = Address.fromString("0x24fC84860e121cC7fAcc806cBB8B81a0039BF428")
+
 export function handleDeposit(event: DepositEvent): void {
   // Create unique ID for the deposit
   let id = event.transaction.hash.toHexString() + "-" + event.logIndex.toString();
@@ -25,6 +30,7 @@ export function handleDeposit(event: DepositEvent): void {
   deposit.timestamp = event.block.timestamp;
   deposit.blockNumber = event.block.number;
   deposit.transactionHash = event.transaction.hash;
+  deposit.contract = getContractName(event.address);
 
   // Get or create account just for the relationship
   let accountId = event.params.provider.toHexString();
@@ -49,6 +55,8 @@ export function handleWithdraw(event: WithdrawEvent): void {
   withdraw.timestamp = event.block.timestamp;
   withdraw.blockNumber = event.block.number;
   withdraw.transactionHash = event.transaction.hash;
+  withdraw.contract = getContractName(event.address);
+  
 
   let accountId = event.params.provider.toHexString();
   let account = Account.load(accountId);
@@ -63,13 +71,26 @@ export function handleWithdraw(event: WithdrawEvent): void {
   withdraw.save();
 }
 
+export function getContractName(address: Address): string {
+  log.info("[getContractName] Address: {}", [address.toHexString()])
+  if (address == FRAX_DUSD_STAKE) {
+    return "FRAX_DUSD_STAKE"
+  } else if (address == FRAX_SUSDE_STAKE) {
+    return "FRAX_SUSDE_STAKE"
+  } else if (address == CVX_FRAX_DUSD_STAKE) {
+   return "CVX_FRAX_DUSD_STAKE"
+  }
+  else return ""
+}
+
 export function handleTransfer(event: TransferEvent): void {
   let id = event.transaction.hash.toHexString() + "-" + event.logIndex.toString();
   let transfer = new Transfer(id);
-
+  
   transfer.from = event.params._from;
   transfer.to = event.params._to;
   transfer.value = event.params._value;
+  transfer.contract = getContractName(event.address);
   transfer.timestamp = event.block.timestamp;
   transfer.blockNumber = event.block.number;
   transfer.transactionHash = event.transaction.hash;

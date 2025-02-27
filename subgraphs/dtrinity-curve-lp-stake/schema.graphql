@@ -12,6 +12,7 @@ type Deposit @entity {
   account: Account!
   provider: Bytes!
   value: BigInt!
+  contract: String!
   timestamp: BigInt!
   blockNumber: BigInt!
   transactionHash: Bytes!
@@ -22,6 +23,7 @@ type Withdraw @entity {
   account: Account!
   provider: Bytes!
   value: BigInt!
+  contract: String!
   timestamp: BigInt!
   blockNumber: BigInt!
   transactionHash: Bytes!
@@ -32,6 +34,7 @@ type Transfer @entity {
   from: Bytes!
   to: Bytes!
   value: BigInt!
+  contract: String!
   timestamp: BigInt!
   blockNumber: BigInt!
   transactionHash: Bytes!
