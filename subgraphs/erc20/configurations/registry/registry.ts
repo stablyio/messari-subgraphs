@@ -9,5 +9,7 @@ export namespace TokenRegistry {
     "QmV1Ppv576oCPTNE2jN1w6pp6YFVNVkvU45xZWyUMrpKEH"; // data/tokens.json
 
 
-  export const FRAX_TESTNET = "QmdbvttSyvgFzXdXxhoWegZNbvp2QNm1ioL8UVaDZR7JxL"; // data/frax-testnet-tokens.txt
+  export const FRAX_TESTNET = "QmdbvttSyvgFzXdXxhoWegZNbvp2QNm1ioL8UVaDZR7JxL"; // data/frax-testnet-tokens.txt;npm run ipfs:fraxtal-testnet
+  export const FRAX_MAINNET = "QmfNGfcozqtEBFmcfxncAQckFLVKwUcetsJbT1mCCv1R3W"; // data/frax-mainnet-tokens.txt; npm run ipfs:fraxtal-mainnet
+
 }

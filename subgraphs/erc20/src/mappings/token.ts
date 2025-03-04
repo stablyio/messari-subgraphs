@@ -28,6 +28,7 @@ import {
   isNewAccount,
   updateAccountBalanceDailySnapshot,
 } from "./account";
+import { getOrCreateDtrinityAccount, increaseDusdHolderCount } from "./dtrinity-account";
 
 export function handleTransfer(event: Transfer): void {
   let token = Token.load(event.address.toHex());
@@ -102,6 +103,8 @@ export function handleTransfer(event: Transfer): void {
     if (isTransfer || isMint) {
       let destinationAccount = getOrCreateAccount(event.params.to);
 
+      let dtrinityAccount = getOrCreateDtrinityAccount(event.params.to);
+
       let accountBalance = increaseAccountBalance(
         destinationAccount,
         token as Token,
@@ -112,6 +115,7 @@ export function handleTransfer(event: Transfer): void {
 
       destinationAccount.save();
       accountBalance.save();
+      dtrinityAccount.save();
 
       // To provide information about evolution of account balances
       updateAccountBalanceDailySnapshot(accountBalance, event);
@@ -320,6 +324,8 @@ function handleTransferEvent(
     if (isNewAccount(destination)) {
       // It means the receiver is a new holder
       toAddressIsNewHolderNum = BIGINT_ONE;
+
+      increaseDusdHolderCount();
     }
     balance = getOrCreateAccountBalance(getOrCreateAccount(destination), token);
     if (balance.amount == BIGINT_ZERO) {

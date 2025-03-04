@@ -1,8 +1,7 @@
 import { dataSource } from "@graphprotocol/graph-ts";
-import { getRegistryIpfsHashByChainID, getTokenListByNetwork } from "./configurations";
+import { getTokenListByNetwork } from "./configurations";
 
 // let deploymentYear = 2022;
-let chainID = 2522;
 
 const network = dataSource.network();
 

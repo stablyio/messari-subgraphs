@@ -1,6 +1,6 @@
-import { Address, JSONValue, Value, log, ipfs } from "@graphprotocol/graph-ts";
+import { Address, JSONValue, Value, log, ipfs, BigInt, bigInt } from "@graphprotocol/graph-ts";
 
-import { Token } from "../../generated/schema";
+import { DtrinityStats, Token } from "../../generated/schema";
 import { Initialized as UnknownEvent } from "../../generated/TokenRegistry/TokenRegistry";
 
 import {
@@ -20,6 +20,14 @@ export function initTokenList(event: UnknownEvent): void {
   log.debug("Initializing token registry, block={}", [
     event.block.number.toString(),
   ]);
+
+  // Create the dtrinity stats
+  const dtrinityStats = new DtrinityStats("dtrinity-stats-1")
+  dtrinityStats.blockNumber = BigInt.fromI32(1)
+  dtrinityStats.timestamp = BigInt.fromI32(1)
+  dtrinityStats.currentDusdHolderCount = BigInt.fromI32(0)
+  // Create the initial dtrinity stat
+  dtrinityStats.save()
 
   // ipfs.mapJSON(REGISTRY_HASH, "createToken", Value.fromString(""));
   TOKEN_LIST.forEach((token) => {

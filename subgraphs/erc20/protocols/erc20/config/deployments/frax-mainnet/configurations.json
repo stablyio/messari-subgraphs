@@ -1,0 +1,10 @@
+{
+  "deployment": "erc20",
+  "network": "frax-mainnet",
+  "address": "0x788d96f655735f52c676a133f4dfc53cec614d4a",
+  "startBlock": 6641262,
+  "TokenRegistry": {
+    "address": "0x788d96f655735f52c676a133f4dfc53cec614d4a",
+    "startBlock": 6641262
+  }
+}

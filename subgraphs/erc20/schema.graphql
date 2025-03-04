@@ -254,6 +254,26 @@ type AccountBalance @entity {
   timestamp: BigInt!
 }
 
+type DtrinityStats @entity {
+  id: ID!
+
+  " Block number in which the balance was last modified "
+  blockNumber: BigInt!
+
+  " Timestamp in which the balance was last modified "
+  timestamp: BigInt!
+
+  " Total number of unique token holders who are currently holding more the token "
+  currentDusdHolderCount: BigInt!
+
+  dusdAccounts: [DtrinityAccount!] 
+}
+
+type DtrinityAccount @entity {
+  " Address of the account "
+  id: ID!
+}
+
 ###############################
 ###### Account Timeseries #####
 ###############################

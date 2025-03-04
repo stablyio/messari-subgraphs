@@ -1,15 +1,28 @@
 {
   "license": "MIT",
   "scripts": {
+    "prepare:constants": "mustache protocols/erc20/config/deployments/${NETWORK}/configurations.json protocols/erc20/config/templates/erc20.template.yaml > subgraph.yaml",
     "format": "npx prettier --write .",
-    "codegen": "graph codegen"
+    "codegen": "graph codegen",
+    "build": "graph build",
+    
+    "ipfs:fraxtal-testnet": "npx ipfs add --api http://52.11.39.166:5001 ./data/frax-testnet-tokens.txt",
+    "prepare:fraxtal-testnet": "NETWORK=frax-testnet npm run prepare:constants",
+    "create-fraxtal-testnet": "graph create --node http://52.11.39.166:8020 stablyio-dtrinity-erc20-testnet",
+    "deploy-fraxtal-testnet": "graph deploy stablyio-dtrinity-erc20-testnet --ipfs http://52.11.39.166:5001 --node http://52.11.39.166:8020 --version-label=0.0.1",
+
+    "ipfs:fraxtal-mainnet": "npx ipfs add --api http://35.165.38.147:5001 ./data/frax-mainnet-tokens.txt",
+    "prepare:fraxtal-mainnet": "NETWORK=frax-mainnet npm run prepare:constants",
+    "create-fraxtal-mainnet": "graph create --node http://35.165.38.147:8020 stablyio-dtrinity-erc20-mainnet",
+    "deploy-fraxtal-mainnet": "graph deploy stablyio-dtrinity-erc20-mainnet --ipfs http://35.165.38.147:5001 --node http://35.165.38.147:8020 --version-label=0.0.1"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.32.0",
-    "@graphprotocol/graph-ts": "0.27.0",
+    "@graphprotocol/graph-cli": "0.80.0",
+    "@graphprotocol/graph-ts": "0.32.0",
     "ipfs-http-client": "^57.0.3"
   },
   "devDependencies": {
+    "mustache": "^4.2.0",
     "prettier": "^2.7.1"
   }
 }

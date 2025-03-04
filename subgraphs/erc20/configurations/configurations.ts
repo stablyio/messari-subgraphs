@@ -13,7 +13,18 @@ const networkToTokenList = new TypedMap<string, BaseERC20Token[]>()
 
 networkToTokenList.set(
   Network.FRAXTAL_TESTNET,
-    [new BaseERC20Token("0x4d6e79013212f10a026a1fb0b926c9fd0432b96c", "dUSD")]
+    [
+      new BaseERC20Token("0x4d6e79013212f10a026a1fb0b926c9fd0432b96c", "dUSD"),
+      new BaseERC20Token("0xD94D2B2E62738e568E97C783446D965AC078bbEA", "ddUSD")
+    ]
+)
+
+networkToTokenList.set(
+  Network.FRAXTAL,
+    [
+      new BaseERC20Token("0x788d96f655735f52c676a133f4dfc53cec614d4a", "dUSD"),
+      new BaseERC20Token("0x29d0256fe397F6e442464982C4Cba7670646059b", "ddUSD")
+    ]
 )
 
 export function getRegistryIpfsHash(year: i32): string {
@@ -47,6 +58,8 @@ export function getRegistryIpfsHashByChainID(chainID: i32): string {
   switch(chainID) {
     case 2522: 
       return TokenRegistry.FRAX_TESTNET
+    case 252: 
+      return TokenRegistry.FRAX_MAINNET
     default: {
       log.critical(`No token registry found for deployment network ${chainID}`, []);
       return TokenRegistry.TOKENS_DEFAULT;

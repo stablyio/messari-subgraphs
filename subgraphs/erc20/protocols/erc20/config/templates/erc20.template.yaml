@@ -26,7 +26,7 @@ dataSources:
           file: ./abis/ERC20.json
       eventHandlers:
         # Use the Initialized event of DUSD token
-        - event: Initialized(uint8 version)
+        - event: Initialized(uint8)
           topic0: "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
           handler: initTokenList
       file: ./src/mappings/registry.ts
