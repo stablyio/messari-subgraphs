@@ -6,6 +6,7 @@ type Transfer @entity(immutable: true) {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+  contract: String!
 }
 
 type Approval @entity(immutable: true) {
@@ -128,6 +129,17 @@ type SetNewMATime @entity(immutable: true) {
 }
 
 type Account @entity {
-  id: Bytes! # address
-  balance: BigInt! # uint256
+  id: Bytes!
+  balances: [Balance!]! @derivedFrom(field: "account")
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type Balance @entity {
+  id: Bytes!                # Composite key: account address + contract name
+  account: Account!         # Reference to the account
+  contract: String!     
+  amount: BigInt!          
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
 }

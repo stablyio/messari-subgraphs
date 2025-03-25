@@ -1,4 +1,4 @@
-import { BigInt, Address, log } from "@graphprotocol/graph-ts";
+import { BigInt, Address, log, Bytes} from "@graphprotocol/graph-ts";
 import {
   FraxDUSDStake,
   Deposit as DepositEvent,
@@ -11,7 +11,8 @@ import {
   Deposit, 
   Withdraw, 
   Transfer, 
-  LiquidityLimit 
+  LiquidityLimit,
+  Balance
 } from "../generated/schema";
 
 // Add these constants at the top of your file
@@ -20,57 +21,6 @@ const FRAX_SUSDE_STAKE = Address.fromString("0x413497D96d1A9dDC75D6786021B8c4eF5
 const CVX_FRAX_DUSD_STAKE = Address.fromString("0x24fC84860e121cC7fAcc806cBB8B81a0039BF428")
 const CVX_SUSDE_DUSD_STAKE = Address.fromString("0xDAc119e023c49A19922d276bF3417FE58154Ee6c")
 
-export function handleDeposit(event: DepositEvent): void {
-  // Create unique ID for the deposit
-  let id = event.transaction.hash.toHexString() + "-" + event.logIndex.toString();
-  let deposit = new Deposit(id);
-
-  // Set deposit properties from event
-  deposit.provider = event.params.provider;
-  deposit.value = event.params.value;
-  deposit.timestamp = event.block.timestamp;
-  deposit.blockNumber = event.block.number;
-  deposit.transactionHash = event.transaction.hash;
-  deposit.contract = getContractName(event.address);
-
-  // Get or create account just for the relationship
-  let accountId = event.params.provider.toHexString();
-  let account = Account.load(accountId);
-  if (!account) {
-    account = new Account(accountId);
-    account.address = event.params.provider;
-    account.balance = BigInt.fromI32(0);
-    account.save();
-  }
-  
-  deposit.account = accountId;
-  deposit.save();
-}
-
-export function handleWithdraw(event: WithdrawEvent): void {
-  let id = event.transaction.hash.toHexString() + "-" + event.logIndex.toString();
-  let withdraw = new Withdraw(id);
-
-  withdraw.provider = event.params.provider;
-  withdraw.value = event.params.value;
-  withdraw.timestamp = event.block.timestamp;
-  withdraw.blockNumber = event.block.number;
-  withdraw.transactionHash = event.transaction.hash;
-  withdraw.contract = getContractName(event.address);
-  
-
-  let accountId = event.params.provider.toHexString();
-  let account = Account.load(accountId);
-  if (!account) {
-    account = new Account(accountId);
-    account.address = event.params.provider;
-    account.balance = BigInt.fromI32(0);
-    account.save();
-  }
-
-  withdraw.account = accountId;
-  withdraw.save();
-}
 
 export function getContractName(address: Address): string {
   if (address == FRAX_DUSD_STAKE) {
@@ -85,39 +35,132 @@ export function getContractName(address: Address): string {
   else return ""
 }
 
+function getOrCreateBalance(accountId: Bytes,  contractAddress: string): Balance {
+  let balanceId = accountId.concat(Bytes.fromUTF8(contractAddress));
+  let balance = Balance.load(balanceId);
+  
+  if (!balance) {
+    balance = new Balance(balanceId);
+    balance.account = accountId;
+    balance.contract = contractAddress;
+    balance.amount = BigInt.fromI32(0);
+    balance.blockNumber = BigInt.fromI32(0);
+    balance.blockTimestamp = BigInt.fromI32(0);
+  }
+  
+  return balance;
+}
+
+export function handleDeposit(event: DepositEvent): void {
+  // Create unique ID for the deposit
+  let id = event.transaction.hash.toHexString() + "-" + event.logIndex.toString();
+  let deposit = new Deposit(id);
+
+  const contractAddress = event.address.toHexString();
+
+  // Set deposit properties from event
+  deposit.provider = event.params.provider;
+  deposit.value = event.params.value;
+  deposit.timestamp = event.block.timestamp;
+  deposit.blockNumber = event.block.number;
+  deposit.transactionHash = event.transaction.hash;
+  deposit.contract = contractAddress
+
+  // Get or create account just for the relationship
+  let accountId = event.params.provider;
+  let account = Account.load(accountId);
+  if (!account) {
+    account = new Account(accountId);
+    account.blockNumber = event.block.number;
+    account.blockTimestamp = event.block.timestamp;
+    account.save();
+  }
+  
+  deposit.account = accountId;
+  deposit.save();
+}
+
+export function handleWithdraw(event: WithdrawEvent): void {
+  let id = event.transaction.hash.toHexString() + "-" + event.logIndex.toString();
+  let withdraw = new Withdraw(id);
+
+  const contractAddress = event.address.toHexString();
+
+  withdraw.provider = event.params.provider;
+  withdraw.value = event.params.value;
+  withdraw.timestamp = event.block.timestamp;
+  withdraw.blockNumber = event.block.number;
+  withdraw.transactionHash = event.transaction.hash;
+  withdraw.contract = contractAddress
+
+  let accountId = event.params.provider;
+  let account = Account.load(accountId);
+  if (!account) {
+    account = new Account(accountId);
+    account.blockNumber = event.block.number;
+    account.blockTimestamp = event.block.timestamp;
+    account.save();
+  }
+
+  withdraw.account = accountId;
+  withdraw.save();
+}
+
 export function handleTransfer(event: TransferEvent): void {
   let id = event.transaction.hash.toHexString() + "-" + event.logIndex.toString();
   let transfer = new Transfer(id);
   
+  const contractAddress = event.address.toHexString();
+
   transfer.from = event.params._from;
   transfer.to = event.params._to;
   transfer.value = event.params._value;
-  transfer.contract = getContractName(event.address);
+  transfer.contract = contractAddress;
   transfer.timestamp = event.block.timestamp;
   transfer.blockNumber = event.block.number;
   transfer.transactionHash = event.transaction.hash;
 
-  // Update sender balance (if not address zero)
-  if (event.params._from.toHexString() != "0x0000000000000000000000000000000000000000") {
-    let fromAccountId = event.params._from.toHexString();
-    let fromAccount = Account.load(fromAccountId);
-    if (fromAccount) {
-      fromAccount.balance = fromAccount.balance.minus(event.params._value);
-      fromAccount.save();
+  if (event.params._from.equals(event.address)) {
+    // Create new account if needed
+    let account = Account.load(event.params._to);
+    if (!account) {
+      account = new Account(event.params._to);
+      account.blockNumber = event.block.number;
+      account.blockTimestamp = event.block.timestamp;
+      account.save();
     }
-  }
 
-  // Update receiver balance (if not address zero)
-  if (event.params._to.toHexString() != "0x0000000000000000000000000000000000000000") {
-    let toAccountId = event.params._to.toHexString();
-    let toAccount = Account.load(toAccountId);
-    if (!toAccount) {
-      toAccount = new Account(toAccountId);
-      toAccount.address = event.params._to;
-      toAccount.balance = BigInt.fromI32(0);
+    // Update receiver's balance
+    let receiverBalance = getOrCreateBalance(event.params._to, contractAddress);
+    receiverBalance.amount = event.params._value;
+    receiverBalance.blockNumber = event.block.number;
+    receiverBalance.blockTimestamp = event.block.timestamp;
+    receiverBalance.save();
+  } 
+  else if (!event.params._to.equals(event.address)) {
+    // Update sender's balance
+    if (!event.params._from.equals(Address.zero())) {
+      let senderBalance = getOrCreateBalance(event.params._from, contractAddress);
+      senderBalance.amount = senderBalance.amount.minus(event.params._value);
+      senderBalance.blockNumber = event.block.number;
+      senderBalance.blockTimestamp = event.block.timestamp;
+      senderBalance.save();
     }
-    toAccount.balance = toAccount.balance.plus(event.params._value);
-    toAccount.save();
+
+    // Create or update receiver's account and balance
+    let receiverAccount = Account.load(event.params._to);
+    if (!receiverAccount) {
+      receiverAccount = new Account(event.params._to);
+      receiverAccount.blockNumber = event.block.number;
+      receiverAccount.blockTimestamp = event.block.timestamp;
+      receiverAccount.save();
+    }
+
+    let receiverBalance = getOrCreateBalance(event.params._to, contractAddress);
+    receiverBalance.amount = receiverBalance.amount.plus(event.params._value);
+    receiverBalance.blockNumber = event.block.number;
+    receiverBalance.blockTimestamp = event.block.timestamp;
+    receiverBalance.save();
   }
 
   transfer.save();
@@ -127,7 +170,7 @@ export function handleUpdateLiquidityLimit(event: UpdateLiquidityLimitEvent): vo
   let id = event.transaction.hash.toHexString() + "-" + event.logIndex.toString();
   let liquidityLimit = new LiquidityLimit(id);
 
-  liquidityLimit.accountEntity = event.params.user.toHexString();
+  liquidityLimit.accountEntity = event.params.user;
   liquidityLimit.account = event.params.user;
   liquidityLimit.originalBalance = event.params.original_balance;
   liquidityLimit.originalSupply = event.params.original_supply;

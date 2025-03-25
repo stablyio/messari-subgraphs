@@ -1,10 +1,17 @@
 type Account @entity {
-  id: ID!
-  address: Bytes!
-  balance: BigInt!
-  deposits: [Deposit!]! @derivedFrom(field: "account")
-  withdraws: [Withdraw!]! @derivedFrom(field: "account")
-  liquidityLimits: [LiquidityLimit!]! @derivedFrom(field: "accountEntity")
+  id: Bytes!
+  balances: [Balance!]! @derivedFrom(field: "account")
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type Balance @entity {
+  id: Bytes!                # Composite key: account + contract name
+  account: Account!         # Reference to the account
+  contract: String!     # Contract Address 
+  amount: BigInt!          
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
 }
 
 type Deposit @entity {
@@ -12,7 +19,7 @@ type Deposit @entity {
   account: Account!
   provider: Bytes!
   value: BigInt!
-  contract: String!
+  contract: String! 
   timestamp: BigInt!
   blockNumber: BigInt!
   transactionHash: Bytes!
@@ -23,7 +30,7 @@ type Withdraw @entity {
   account: Account!
   provider: Bytes!
   value: BigInt!
-  contract: String!
+  contract: String! 
   timestamp: BigInt!
   blockNumber: BigInt!
   transactionHash: Bytes!
@@ -34,7 +41,7 @@ type Transfer @entity {
   from: Bytes!
   to: Bytes!
   value: BigInt!
-  contract: String!
+  contract: String! 
   timestamp: BigInt!
   blockNumber: BigInt!
   transactionHash: Bytes!
