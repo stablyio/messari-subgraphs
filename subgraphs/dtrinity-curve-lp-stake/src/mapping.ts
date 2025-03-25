@@ -15,26 +15,6 @@ import {
   Balance
 } from "../generated/schema";
 
-// Add these constants at the top of your file
-const FRAX_DUSD_STAKE = Address.fromString("0x05600c37D54a4F3cDc76E0867aF1530BeCC332ca")
-const FRAX_SUSDE_STAKE = Address.fromString("0x413497D96d1A9dDC75D6786021B8c4eF5bF2333e")
-const CVX_FRAX_DUSD_STAKE = Address.fromString("0x24fC84860e121cC7fAcc806cBB8B81a0039BF428")
-const CVX_SUSDE_DUSD_STAKE = Address.fromString("0xDAc119e023c49A19922d276bF3417FE58154Ee6c")
-
-
-export function getContractName(address: Address): string {
-  if (address == FRAX_DUSD_STAKE) {
-    return "FRAX_DUSD_STAKE"
-  } else if (address == FRAX_SUSDE_STAKE) {
-    return "FRAX_SUSDE_STAKE"
-  } else if (address == CVX_FRAX_DUSD_STAKE) {
-   return "CVX_FRAX_DUSD_STAKE"
-  } else if (address == CVX_SUSDE_DUSD_STAKE) {
-    return "CVX_SUSDE_DUSD_STAKE"
-   } 
-  else return ""
-}
-
 function getOrCreateBalance(accountId: Bytes,  contractAddress: string): Balance {
   let balanceId = accountId.concat(Bytes.fromUTF8(contractAddress));
   let balance = Balance.load(balanceId);
